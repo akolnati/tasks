@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body onload="init()">
+  <label>Html Output </label>
+  <br /><br />
+  <textarea id="htmlOutput" rows="10" cols="60"></textarea>
+  <script> 
+    /* jshint esnext:true */
+    /* jshint -W030 */
+
+    const arrayOfItems = ['a', ['b', 'More', ['c', 'SomeMore', 'BitMore']], 'Text']
+    let stringOfHtml = ''
+
+    function init() {
+      try {
+        // check if valid array and has atleast one item
+        if (!Array.isArray(arrayOfItems) || arrayOfItems.length === 0)  {
+          throw new Error('Invalid or Empty array')
+        }
+        
+        // check if array has only one item
+        if (arrayOfItems.length === 1) {
+          // check if item is string
+          if (typeof arrayOfItems[0] === 'string') {
+            stringOfHtml = `<${arrayOfItems[0]}/>`
+          }
+        } else {
+          recursive(arrayOfItems)
+        }
+        document.getElementById('htmlOutput').value = stringOfHtml
+      } catch(error) {
+        console.log(error.name + ': ' + error.message);
+        document.getElementById('htmlOutput').value = error.message
+      }
+    }
+
+    const recursive = (items) => {
+      // The tag name is always the first entry in the array and is a string.
+      stringOfHtml += `<${items[0]}>`
+      
+      items.forEach((item, index) => {
+        if(index !== 0) {
+          if (typeof item === 'string') {
+            stringOfHtml += `${item.replace(/</g, "&lt;").replace(/>/g, "&gt;")}`
+          } else if (Array.isArray(item)){
+            recursive(item)
+          }
+        }
+      })
+
+      // The closing tag
+      stringOfHtml += `</${items[0]}>`
+    }  
+  </script>
+</body>
+</html>
